@@ -16,7 +16,12 @@ namespace HaThanhTuD3.Controllers
         // GET: CategoryController/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            var category = SeedData.categories.FirstOrDefault(c => c.Id == id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return View(category);
         }
 
         // GET: CategoryController/Create
@@ -28,37 +33,49 @@ namespace HaThanhTuD3.Controllers
         // POST: CategoryController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create([FromForm] Models.Category category)
         {
-            try
+           if (ModelState.IsValid)
             {
+                //lay id trong danhh sach category va tang len 1 de tao id moi
+                int maxId = SeedData.categories.Max(c => c.Id);
+                //gan id moi cho category
+                category.Id = maxId + 1;
+                //them category moi vao danh sach
+                SeedData.categories.Add(category);
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
                 return View();
-            }
         }
 
         // GET: CategoryController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit([FromRoute]int id)
         {
-            return View();
+            var category = SeedData.categories.FirstOrDefault(c => c.Id == id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return View(category);
         }
 
         // POST: CategoryController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit([FromForm] int id, Models.Category category)
         {
-            try
+            var existingCategory = SeedData.categories.FirstOrDefault(c => c.Id == id);
+            if (existingCategory == null) {
+                return NotFound();
+            }
+            if (ModelState.IsValid)
             {
+                existingCategory.Name = category.Name;
+                existingCategory.Description = category.Description;
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View(category);
+
         }
 
         // GET: CategoryController/Delete/5
