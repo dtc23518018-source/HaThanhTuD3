@@ -35,7 +35,7 @@ namespace HaThanhTuD3.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([FromForm] Models.Category category)
         {
-           if (ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 //lay id trong danhh sach category va tang len 1 de tao id moi
                 int maxId = SeedData.categories.Max(c => c.Id);
@@ -45,11 +45,11 @@ namespace HaThanhTuD3.Controllers
                 SeedData.categories.Add(category);
                 return RedirectToAction(nameof(Index));
             }
-                return View();
+            return View();
         }
 
         // GET: CategoryController/Edit/5
-        public ActionResult Edit([FromRoute]int id)
+        public ActionResult Edit([FromRoute] int id)
         {
             var category = SeedData.categories.FirstOrDefault(c => c.Id == id);
             if (category == null)
@@ -65,7 +65,8 @@ namespace HaThanhTuD3.Controllers
         public ActionResult Edit([FromForm] int id, Models.Category category)
         {
             var existingCategory = SeedData.categories.FirstOrDefault(c => c.Id == id);
-            if (existingCategory == null) {
+            if (existingCategory == null)
+            {
                 return NotFound();
             }
             if (ModelState.IsValid)
@@ -79,24 +80,28 @@ namespace HaThanhTuD3.Controllers
         }
 
         // GET: CategoryController/Delete/5
-        public ActionResult Delete(int id)
+        public ActionResult Delete([FromRoute] int id)
         {
-            return View();
+            var category = SeedData.categories.FirstOrDefault(c => c.Id == id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return View(category);
         }
 
         // POST: CategoryController/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult DeleteConfirm([FromRoute] int id)
         {
-            try
+            var existingCategory = SeedData.categories.FirstOrDefault(c => c.Id == id);
+            if (existingCategory == null)
             {
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
-            {
-                return View();
-            }
+            SeedData.categories.Remove(existingCategory);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
